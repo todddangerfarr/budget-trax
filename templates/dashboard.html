@@ -1,0 +1,21 @@
+{% extends 'nav.html' %}
+
+{% block content %}
+  <h1>Dashboard</h1> 
+
+  <div>
+    <h4>Recent Expenses</h4>
+    <table>
+      {% for expense in recent_expenses %}
+        <tr>
+          <td style="width: 150px;"><i class="fa fa-calendar"></i> {{ expense.date }}</td>
+          <td style="width: 150px;"><i class="fa fa-building"></i> {{ expense.merchant }}</td>
+          <td style="width: 150px;"><i class="fa fa-cubes"></i> {{ expense.category }}</td>
+          <td style="width: 150px;"><i class="fa fa-dollar"></i> {{ '{:.2f}'.format(expense.cost / 100) }}</td>
+          <td style="width: 150px;"><i class="fa fa-user"></i> {{ expense.creator.username }}</td>
+          <td style="width: 200px;"><i class="fa fa-align-justify"></i> {{ expense.description }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endblock %}

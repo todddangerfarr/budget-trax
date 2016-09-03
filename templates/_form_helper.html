@@ -1,0 +1,21 @@
+{% macro render_field(field) %}
+
+<div class="field">
+  {% if field.errors %}
+    {% for error in field.errors %}
+      <div class="notification error">{{ error }}</div>
+    {% endfor %}
+  {% endif %}
+
+  {% if field.name == 'cost' %}
+    <div class="input-group" id="cost-group">
+      <span class="input-group-addon" id="dollar-addon"><i class="fa fa-dollar"></i></span>
+      {{ field(placeholder=field.label.text, **{"aria-describedby": "dollar-addon", "class": "form-control"}) }}
+    </div>
+
+  {% else %}
+    {{ field(placeholder=field.label.text) }}
+  {% endif %}
+</div>
+
+{% endmacro %}

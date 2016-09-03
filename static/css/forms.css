@@ -1,0 +1,37 @@
+/*FORM STYLING*/
+
+/************************************** STYLING SPECIFIC TO THE EXPENSE FORM */
+
+.expense-form {
+  width: 275px;
+  margin: 10px auto;
+}
+
+.field {
+  padding: 2px 10px;
+}
+
+.expense-form #merchant, .expense-form #category,
+.expense-form #description, .expense-form #cost-group,
+.expense-form #submit, .expense-form #date {
+  width: 250px;
+  height: 30px;
+  margin-bottom: 5px;
+}
+
+.expense-form #description, .expense-form #date {
+  padding-left: 5px;
+}
+
+::-webkit-inner-spin-button {
+  padding-top: 5px;
+}
+
+.expense-form #cost-group {
+  margin-left: 3px;
+  margin-bottom: 10px;
+}
+
+.expense-form #cost {
+  margin-bottom: -1px;
+}
