@@ -1,0 +1,40 @@
+/* APPLICATION MAIN STYLING */
+
+/************************************************************** Font Classes */
+
+.century-gothic {
+  font-family: 'Century Gothic';
+}
+
+/************************************************************ Dashboard Page */
+
+.recent-expenses th {
+  padding: 5px 0px;
+}
+
+.recent-expenses td {
+  min-width: 150px;
+  padding: 3px 0px;
+}
+
+
+/****************************************************************** 404 Page */
+
+.sad-404 {
+  font-size: 300px;
+}
+
+.container-404 {
+  background-color: tomato;
+  height: 100vh;
+}
+
+.text-404 {
+  width:500px;
+  height:500px;
+  position:absolute;
+  left:50%;
+  top:50%;
+  margin-left:-250px;
+  margin-top:-250px;
+}

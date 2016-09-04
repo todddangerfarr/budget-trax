@@ -88,7 +88,7 @@ def add_expense():
                 i for i in form.cost.data.strip() if i.isdigit()),
             merchant = form.merchant.data,
             category = form.category.data,
-            creator = user 
+            creator = user
         )
         db.session.add(expense)
         db.session.commit()
@@ -133,6 +133,15 @@ def add_merchant():
                 form.merchant.data.strip()), 'success')
             return redirect(url_for('dashboard'))
     return render_template('add_merchant.html', user=user, form=form)
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('500.html'), 500
 
 # start flask application
 if __name__ == '__main__':
