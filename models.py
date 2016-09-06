@@ -20,6 +20,15 @@ class User(db.Model, UserMixin):
         return '<User {}>'.format(self.username) # how this class is displayed
 
 
+class Budget(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.relationship('Category', backref='budget', uselist=False)
+    limit = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<Budget for {}>'.format(self.category)
+
+
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date)
@@ -36,7 +45,8 @@ class Expense(db.Model):
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     category_text = db.Column(db.String(120), unique=True)
-    expesnes = db.relationship('Expense', backref='category', lazy='dynamic')
+    expenses = db.relationship('Expense', backref='category', lazy='dynamic')
+    budget_id = db.Column(db.Integer, db.ForeignKey('budget.id'))
 
     def __repr__(self):
         return '{}'.format(self.category_text.title())

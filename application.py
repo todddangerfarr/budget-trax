@@ -3,12 +3,12 @@ from flask import (Flask, render_template, url_for, g, redirect, flash,
 from flask_login import (LoginManager, login_user, logout_user, current_user,
                          login_required)
 from flask_bcrypt import Bcrypt
-from forms import LoginForm, ExpenseForm, MerchantForm, CategoryForm
-from models import db, User, Merchant, Category, Expense
+from forms import LoginForm, ExpenseForm, MerchantForm, CategoryForm, BudgetForm
+from models import db, User, Merchant, Category, Expense, Budget
 
 # application constants
 DEBUG = True
-PORT = 8000
+PORT = 5000
 HOST = '0.0.0.0'
 
 # create and setup the flask application object
@@ -55,7 +55,8 @@ def login():
         if (user != None and bcrypt.check_password_hash(
                              user.password, form.password.data)):
             login_user(user)
-            flash("You've been logged in!", "success")
+            flash("Welcome {}, you've been logged in!".format(user.username),
+                  "success")
             return redirect(url_for('dashboard'))
         else:
             flash("Your username or password is incorrect!")
@@ -64,16 +65,18 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    flash("You've been logged out!")
+    flash("You've been logged out", "info")
     return redirect(url_for('index'))
 
 @app.route('/dashboard')
 @login_required
 def dashboard():
     user = g.user
-    recent_expenses = Expense.query.limit(10).all()
+    recent_expenses = Expense.query.order_by(
+                      Expense.date.desc()).limit(10).all()
+    budgets = Budget.query.all()
     return render_template('dashboard.html', user=user,
-        recent_expenses = recent_expenses)
+        recent_expenses = recent_expenses, budgets=budgets)
 
 @app.route('/add_expense', methods=('GET', 'POST'))
 @login_required
@@ -134,6 +137,23 @@ def add_merchant():
             return redirect(url_for('dashboard'))
     return render_template('add_merchant.html', user=user, form=form)
 
+@app.route('/create_budget', methods=('GET', 'POST'))
+@login_required
+def add_budget():
+    user = g.user
+    form = BudgetForm()
+    if form.validate_on_submit():
+        budget = Budget(
+            category = form.category.data,
+            limit = ''.join(i for i in form.limit.data.strip() if i.isdigit())
+        )
+        db.session.add(budget)
+        db.session.commit()
+        flash("You've created a budget for: {}".format(
+            form.category.data.category_text.title()), 'success')
+        return redirect(url_for('dashboard'))
+    return render_template('add_budget.html', user=user, form=form)
+
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404
@@ -142,6 +162,20 @@ def not_found_error(error):
 def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500
+
+@app.context_processor
+def utility_processor():
+    def get_budget_total(budget):
+        """ A context processor used to return the running total of the budget
+        object expenses. """
+        total = 0
+        expenses = budget.category.expenses.all()
+        if expenses != None:
+            for expense in expenses:
+                total += expense.cost
+        return total
+
+    return dict(get_budget_total=get_budget_total)
 
 # start flask application
 if __name__ == '__main__':

@@ -10,6 +10,13 @@ class LoginForm(Form):
     password = PasswordField('Password', validators=[DataRequired()])
 
 
+class BudgetForm(Form):
+    category = QuerySelectField(
+        query_factory=lambda: Category.query.order_by(
+        Category.category_text).all())
+    limit = StringField('Monthly Spending Limit', validators=[DataRequired()])
+
+
 class ExpenseForm(Form):
     date = DateField('DatePicker', format='%Y-%m-%d')
     merchant = QuerySelectField(

@@ -6,7 +6,50 @@
   font-family: 'Century Gothic';
 }
 
+/************************************************************ Flash Messages */
+
+#message-top-display {
+  margin-left: auto;
+  margin-right: auto;
+  left: 38%; /*Need to add responsiveness for smaller screens*/
+  right: 38%;
+  position: absolute;
+  z-index: 1499;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  height: 45px;
+  padding: 12px;
+}
+
+.flash-messages li {
+  list-style: none;
+}
+
+/***************************************************************** Navigation */
+
+#alert-nav {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 /************************************************************ Dashboard Page */
+
+.dashboard-head h1 {
+  margin-top: 5px;
+  display: inline-block;
+}
+
+.budgets {
+  margin: 10px 0px 20px 0px;
+}
+
+.budgets p {
+  margin-bottom: 5px;
+}
+
+.recent-expenses {
+  margin-top: 10px;
+}
 
 .recent-expenses th {
   padding: 5px 0px;

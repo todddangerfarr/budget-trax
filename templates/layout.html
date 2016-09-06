@@ -14,8 +14,20 @@
         {% block stylesheets %}{% endblock %}
         <script type="text/javascript" src="/static/js/jquery-3.1.0.min.js"></script>
         <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/static/js/scripts.js"></script>
     </head>
     <body>
+
+      <!-- FLASH MESSAGES:START -->
+      {% with messages = get_flashed_messages(with_categories=True) %}
+      	{% if messages %}
+        	{% for catagory, message in messages %}
+          	<div id="message-top-display" class="text-center alert alert-{{catagory}}">{{ message }}</div>
+        	{% endfor %}
+      	{% endif %}
+    	{% endwith %}
+      <!-- FLASH MESSAGES:END -->
+
       {% block nav %} {% endblock %}
     </body>
 </html>

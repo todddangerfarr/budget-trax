@@ -1,31 +1,65 @@
 {% extends 'nav.html' %}
 
 {% block content %}
-  <h1>Dashboard</h1>
+  <div class="dashboard-head">
+    <h1>Dashboard</h1>
 
-  <div class="recent-expenses">
-    <h4>Recent Expenses</h4>
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th><i class="fa fa-calendar"></i> Date</th>
-          <th><i class="fa fa-building"></i> Merchant</th>
-          <th><i class="fa fa-cubes"></i> Category</th>
-          <th><i class="fa fa-dollar"></i> Cost</th>
-          <th><i class="fa fa-user"></i> Creator</th>
-          <th><i class="fa fa-align-justify"></i> Description</th>
-        </tr>
-      </thead>
-      {% for expense in recent_expenses %}
-        <tr>
-          <td>{{ expense.date }}</td>
-          <td>{{ expense.merchant }}</td>
-          <td>{{ expense.category }}</td>
-          <td>{{ '${:.2f}'.format(expense.cost / 100) }}</td>
-          <td>{{ expense.creator.username }}</td>
-          <td>{{ expense.description }}</td>
-        </tr>
-      {% endfor %}
-    </table>
+    <a class="btn btn-success pull-right" href="{{ url_for('add_budget') }}" role="button">
+      <i class="fa fa-bar-chart"></i> Create New Budget
+    </a>
   </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><i class="fa fa-bar-chart"></i> Budgets</h3>
+    </div>
+    <div class="panel-body">
+      <div class="budgets">
+        {% for budget in budgets if budget != None %}
+          {% set total = get_budget_total(budget) %}
+          <p class='budget-name'>
+            {{ budget.category | title }} - {{ '${:.2f}'.format(total / 100) }} / {{ '${:.2f}'.format(budget.limit / 100) }}
+          </p>
+          <div class="progress">
+            <div class="progress-bar" style="width: {{'{}%'.format((total / budget.limit) *100) }};">
+              <span class="sr-only">60% Complete</span>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><i class="fa fa-clock-o"></i> Recent Expenses</h3>
+    </div>
+    <div class="panel-body">
+      <div class="recent-expenses">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th><i class="fa fa-calendar"></i> Date</th>
+              <th><i class="fa fa-building"></i> Merchant</th>
+              <th><i class="fa fa-cubes"></i> Category</th>
+              <th><i class="fa fa-align-justify"></i> Description</th>
+              <th><i class="fa fa-dollar"></i> Cost</th>
+              <th><i class="fa fa-user"></i> Creator</th>
+            </tr>
+          </thead>
+          {% for expense in recent_expenses %}
+            <tr>
+              <td>{{ expense.date }}</td>
+              <td>{{ expense.merchant }}</td>
+              <td>{{ expense.category }}</td>
+              <td>{{ expense.description }}</td>
+              <td>{{ '${:.2f}'.format(expense.cost / 100) }}</td>
+              <td>{{ expense.creator.username }}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}
