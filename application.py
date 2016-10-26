@@ -5,6 +5,8 @@ from flask_login import (LoginManager, login_user, logout_user, current_user,
 from flask_bcrypt import Bcrypt
 from forms import LoginForm, ExpenseForm, MerchantForm, CategoryForm, BudgetForm
 from models import db, User, Merchant, Category, Expense, Budget
+import datetime
+import calendar
 
 # application constants
 DEBUG = True
@@ -163,6 +165,8 @@ def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500
 
+
+############################################################# CONTEXT PROCESSORS
 @app.context_processor
 def utility_processor():
     def get_budget_total(budget):
@@ -175,7 +179,21 @@ def utility_processor():
                 total += expense.cost
         return total
 
-    return dict(get_budget_total=get_budget_total)
+    def get_today():
+        """ A context processor to return today's date. """
+        return datetime.date.today()
+
+    def get_days_in_month(year, month):
+        """ A context processpr to return the days in the month. """
+        return calendar.monthrange(year, month)[1]
+
+    def get_marker_loc(today, days_in_month):
+        """ A context processor to return the marker location for budgets. """
+        return int((today / days_in_month) * 100)
+
+    return dict(get_budget_total=get_budget_total, get_today=get_today,
+        get_days_in_month=get_days_in_month, get_marker_loc=get_marker_loc)
+
 
 # start flask application
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 {% extends 'nav.html' %}
 
 {% block content %}
+<div class="container">
   <div class="dashboard-head">
     <h1>Dashboard</h1>
 
@@ -15,16 +16,32 @@
     </div>
     <div class="panel-body">
       <div class="budgets">
+
         {% for budget in budgets if budget != None %}
+          {% set today = get_today() %}
+          {% set marker_loc = get_marker_loc(today.day, get_days_in_month(today.year, today.month)) %}
           {% set total = get_budget_total(budget) %}
-          <p class='budget-name'>
-            {{ budget.category | title }} - {{ '${:.2f}'.format(total / 100) }} / {{ '${:.2f}'.format(budget.limit / 100) }}
-          </p>
-          <div class="progress">
-            <div class="progress-bar" style="width: {{'{}%'.format((total / budget.limit) *100) }};">
-              <span class="sr-only">60% Complete</span>
-            </div>
+          {% if ((total / budget.limit) * 100) < marker_loc %}
+            {% set progress_class = "progress-bar-success" %}
+          {% else %}
+            {% set progress_class = "progress-bar-warning" %}
+          {% endif %}
+          <div class="budget-info">
+            <h4 class="budget-name pull-left">
+              {{ budget.category | title }}
+            </h4>
+            <p class="budget-remaining pull-right">
+              <strong>${{ '{:.2f}'.format((budget.limit - total) / 100) }}</strong> Remaining
+            <p>
           </div>
+          <div id="budget-progress" class="progress">
+            <div class="progress-bar {{ progress_class }}" style="width: {{'{}%'.format((total / budget.limit) *100) }};">
+              <span>{{ '${:.2f}'.format(total / 100) }} / {{ '${:.2f}'.format(budget.limit / 100) }}</span>
+            </div>
+            <div class="marker" style="left: {{ marker_loc }}%;" title="Today: {{ today.month }}/{{ today.day }}/{{ today.year }}"></div>
+          </div>
+        {% else %}
+          <h4>You have not created any budgets yet</h4>
         {% endfor %}
       </div>
     </div>
@@ -61,5 +78,5 @@
       </div>
     </div>
   </div>
-
+</div> 
 {% endblock %}
