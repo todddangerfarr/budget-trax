@@ -41,7 +41,7 @@
 .jumbotron {
   margin-top: -20px;
   min-height: 500px;
-  padding-top: 100px; 
+  padding-top: 100px;
   background-image: url(../images/temp-splash.jpg);
   background-size: cover;
   background-position: 50% 40%;
@@ -67,6 +67,7 @@
 #budget-progress {
   clear: both;
   position: relative;
+  overflow: visible;
 }
 
 .budget-name {
@@ -100,6 +101,18 @@
   padding: 3px 0px;
 }
 
+.recent-budget-month {
+  float: left;
+}
+
+.recent-budget-year {
+  float: right;
+}
+
+.recent-history-label {
+  padding: 5px 10px;
+  margin: 2.5px;
+}
 
 /****************************************************************** 404 Page */
 

@@ -20,7 +20,7 @@
         {% for budget in budgets if budget != None %}
           {% set today = get_today() %}
           {% set marker_loc = get_marker_loc(today.day, get_days_in_month(today.year, today.month)) %}
-          {% set total = get_budget_total(budget) %}
+          {% set total = get_budget_total(budget, today) %}
           {% if ((total / budget.limit) * 100) < marker_loc %}
             {% set progress_class = "progress-bar-success" %}
           {% else %}
@@ -38,7 +38,7 @@
             <div class="progress-bar {{ progress_class }}" style="width: {{'{}%'.format((total / budget.limit) *100) }};">
               <span>{{ '${:.2f}'.format(total / 100) }} / {{ '${:.2f}'.format(budget.limit / 100) }}</span>
             </div>
-            <div class="marker" style="left: {{ marker_loc }}%;" title="Today: {{ today.month }}/{{ today.day }}/{{ today.year }}"></div>
+            <div class="marker" style="left: {{ marker_loc }}%;" data-toggle="tooltip" data-placement="top" title="Today: {{ today.month }}/{{ today.day }}/{{ today.year }}"></div>
           </div>
         {% else %}
           <h4>You have not created any budgets yet</h4>
@@ -78,5 +78,51 @@
       </div>
     </div>
   </div>
-</div> 
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><i class="fa fa-calendar"></i> Recent Budget History</h3>
+    </div>
+    <div class="panel-body">
+      <div class="budget-history">
+        {% set recent_bh = get_recent_budget_history(3) %}
+
+        <div class="row">
+          {% for key, value in recent_bh.items() %}
+            <div class="col-lg-4">
+              <div class="panel panel-danger">
+                <div class="panel-heading" style="clear: both; height: 40px;">
+                  <h3 class="panel-title recent-budget-month"> {{ key[0] }} </h3>
+                  <span class="recent-budget-year"> {{ key[1] }} </span>
+                </div>
+                <div class="panel-body">
+                  {% for nested_key, nested_value in value.items() %}
+                    {% if (nested_value / 100) <= 50 %}
+                      <span class="label label-success recent-history-label">
+                    {% else %}
+                      <span class="label label-danger recent-history-label">
+                    {% endif %}
+                        {{ nested_key | title }} - {{ "${:.02f}".format(nested_value / 100) }}
+                      </span>
+
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip('show');
+  });
+</script>
+
 {% endblock %}

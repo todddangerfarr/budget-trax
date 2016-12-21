@@ -5,6 +5,8 @@ from flask_login import (LoginManager, login_user, logout_user, current_user,
 from flask_bcrypt import Bcrypt
 from forms import LoginForm, ExpenseForm, MerchantForm, CategoryForm, BudgetForm
 from models import db, User, Merchant, Category, Expense, Budget
+from collections import OrderedDict
+from dateutil.relativedelta import relativedelta
 import datetime
 import calendar
 
@@ -169,11 +171,18 @@ def internal_error(error):
 ############################################################# CONTEXT PROCESSORS
 @app.context_processor
 def utility_processor():
-    def get_budget_total(budget):
+    def get_budget_total(budget, date):
         """ A context processor used to return the running total of the budget
         object expenses. """
         total = 0
-        expenses = budget.category.expenses.all()
+        first_day_of_month = date.replace(day=1)
+        last_day_of_month = date.replace(
+                day=calendar.monthrange(date.year, date.month)[1]
+            )
+        expenses = budget.category.expenses.filter(
+                Expense.date > first_day_of_month,
+                Expense.date < last_day_of_month
+            )
         if expenses != None:
             for expense in expenses:
                 total += expense.cost
@@ -191,8 +200,24 @@ def utility_processor():
         """ A context processor to return the marker location for budgets. """
         return int((today / days_in_month) * 100)
 
+    def get_recent_budget_history(num_months):
+        """ A context processor to return the previous num_months of budget
+            information for the dashboard. """
+        today = get_today()
+        budget_history_dict = OrderedDict()
+        for i in range(1, num_months+1):
+            calculated_date = today - relativedelta(months=i)
+            key = (calendar.month_name[calculated_date.month], calculated_date.year)
+            budget_history_dict[key] = {}
+            for budget in Budget.query.all():
+                budget_history_dict[key][budget.category.category_text] = get_budget_total(budget, calculated_date)
+
+        return budget_history_dict
+
+
     return dict(get_budget_total=get_budget_total, get_today=get_today,
-        get_days_in_month=get_days_in_month, get_marker_loc=get_marker_loc)
+        get_days_in_month=get_days_in_month, get_marker_loc=get_marker_loc,
+        get_recent_budget_history=get_recent_budget_history)
 
 
 # start flask application
